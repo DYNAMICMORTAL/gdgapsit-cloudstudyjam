@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-google;
+  }
+  
+  * {
+    @apply scroll-smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-google-blue text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-google-blue px-6 py-3 rounded-lg font-medium border-2 border-google-blue hover:bg-blue-50 transition-all duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+  }
+  
+  .google-gradient {
+    @apply bg-gradient-to-r from-google-blue via-google-red to-google-yellow;
+  }
+  
+  .gdg-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-google-blue to-google-green text-white font-medium shadow-lg;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-google-blue rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-blue-600;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(to right, #f0f0f0 4%, #e0e0e0 25%, #f0f0f0 36%);
+  background-size: 1000px 100%;
+}
