@@ -10,8 +10,13 @@ from scrapper.scrapper import scrape_profile_badges_for_list
 from scrapper.processor import build_and_save_csvs, compute_summary
 from scrapper.supbase_client import SupabaseClient
 
-# Load environment variables from config/.env
-load_dotenv(dotenv_path="config/.env")
+# Load environment variables from config/.env if it exists (local development)
+env_path = Path("config/.env")
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
+    logging.info("Loaded environment variables from config/.env")
+else:
+    logging.info("No config/.env found, using environment variables")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
@@ -23,10 +28,10 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
 
 if not DRIVE_LINK:
-    logging.error("Please set DRIVE_XLSX_LINK in .env")
+    logging.error("Please set DRIVE_XLSX_LINK environment variable or in config/.env")
     raise SystemExit(1)
 if not SUPABASE_URL or not SUPABASE_KEY:
-    logging.error("Please set SUPABASE_URL and SUPABASE_SERVICE_KEY in .env")
+    logging.error("Please set SUPABASE_URL and SUPABASE_SERVICE_KEY environment variables or in config/.env")
     raise SystemExit(1)
 
 def main():

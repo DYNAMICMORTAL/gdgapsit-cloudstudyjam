@@ -9,8 +9,12 @@ import logging
 from datetime import datetime, timezone
 from scrapper.supbase_client import SupabaseClient
 
-# Load environment variables
-load_dotenv(dotenv_path="config/.env")
+# Load environment variables from config/.env if it exists
+env_path = Path("config/.env")
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
+else:
+    logging.info("No config/.env found, using environment variables")
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 

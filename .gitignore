@@ -1,3 +1,8 @@
+# Environment variables
+.env
+config/.env
+*.env
+
 # Python
 __pycache__/
 *.py[cod]
@@ -20,46 +25,24 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-.venv/
+# Virtual environments
 venv/
 ENV/
 env/
 
-# IDEs
+# Data files (optional - uncomment if you don't want to commit data)
+# data/*.csv
+# data/*.json
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
-
-# Logs
-logs/
-*.log
-
-# Data (optional - uncomment if you don't want to commit data)
-# data/*.csv
-# data/*.json
-
-# Environment variables (CRITICAL - DO NOT COMMIT)
-config/.env
-.env
-.env.local
-.env.production
-frontend/.env
-frontend/.env.local
-frontend/.env.production
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Vercel
-.vercel
-
 # Playwright
-.playwright/
-
-# Temporary files
-*.tmp
-*.bak
+playwright/.cache/
