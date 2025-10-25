@@ -4,37 +4,45 @@ on:
   schedule:
     # Run every 3 hours
     - cron: '0 */3 * * *'
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
-  scrape:
+  scrape-and-update:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-          cache: 'pip'
-      
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
-      
+
       - name: Install Playwright browsers
         run: |
           playwright install chromium
-      
+          playwright install-deps chromium
+
       - name: Create config directory
         run: mkdir -p config
-      
-      - name: Create .env file
+
+      - name: Create .env file from secrets
         run: |
-          cat << EOF > config/.env
+          cat > config/.env << EOF
           DRIVE_XLSX_LINK=${{ secrets.DRIVE_XLSX_LINK }}
           SUPABASE_URL=${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY=${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -43,24 +51,30 @@ jobs:
           SLEEP_SECONDS=2
           USE_PLAYWRIGHT_FALLBACK=true
           EOF
-      
+
       - name: Run scraper
-        run: python main.py
-      
+        env:
+          DRIVE_XLSX_LINK: ${{ secrets.DRIVE_XLSX_LINK }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          python main.py
+
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        if: always()
+        uses: actions/upload-artifact@v3
         with:
           name: leaderboard-data
           path: |
             data/*.csv
             data/*.json
           retention-days: 30
-      
-      - name: Commit and push updated data (optional)
+
+      - name: Commit and push data (optional)
         if: success()
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/*.csv data/*.json || true
+          git add data/*.csv data/*.json
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update leaderboard data [skip ci]" && git push)
         continue-on-error: true
