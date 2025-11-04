@@ -74,6 +74,13 @@ class SupabaseClient:
             try:
                 # Compute rank and total badges
                 badges = r.get("badges", [])
+                
+                # Cap badges at maximum of 19
+                MAX_BADGES = 19
+                if len(badges) > MAX_BADGES:
+                    logging.info("Participant %s has %d badges, capping at %d", r.get("name"), len(badges), MAX_BADGES)
+                    badges = badges[:MAX_BADGES]
+                
                 total_badges = len(badges)
                 
                 # Get last earned date
