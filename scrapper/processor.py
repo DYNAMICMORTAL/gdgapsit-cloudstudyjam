@@ -17,6 +17,12 @@ def build_and_save_csvs(results: List[Dict], data_dir: Path):
     for r in results:
         badges = r.get("badges", [])
         
+        # Cap badges at maximum of 19
+        MAX_BADGES = 19
+        if len(badges) > MAX_BADGES:
+            logging.info("Capping badges for %s from %d to %d", r.get("name"), len(badges), MAX_BADGES)
+            badges = badges[:MAX_BADGES]
+        
         # Build detailed rows (one per badge)
         for b in badges:
             earned_date = b.get("earned_date")
